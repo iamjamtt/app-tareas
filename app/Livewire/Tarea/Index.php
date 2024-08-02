@@ -95,6 +95,17 @@ class Index extends Component
         $this->alerta('Tarea guardada correctamente', true);
     }
 
+    // Método para eliminar la tarea
+    public function eliminar_tarea($id_tarea): void
+    {
+        // Aquí iría la lógica para eliminar la tarea
+        $tarea = Tarea::find($id_tarea);
+        $tarea->delete();
+
+        // Mostrar la alerta
+        $this->alerta('Tarea eliminada correctamente', true);
+    }
+
     public function render()
     {
         // ID del usuario logueado
