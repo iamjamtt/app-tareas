@@ -12,6 +12,12 @@ use Livewire\Component;
 #[Title('Tareas - SGT')]
 class Index extends Component
 {
+    // Aqui se almacena el ID de la tarea para las diferentes acciones
+    public $id_tarea;
+
+    // Variable para saber si se va a crear o actualizar una tarea
+    public string $modo = 'crear';
+
     // Variables para el formulario
     #[Validate('required|min:6')]
     public string $tarea = '';
@@ -33,6 +39,23 @@ class Index extends Component
         $this->mostrar_alerta = $estado;
     }
 
+    // Método para cargar los datos de la tarea
+    public function cargar_tarea($id_tarea): void
+    {
+        // Aqui buscamos la tarea por el ID
+        $tarea = Tarea::find($id_tarea);
+
+        // Aqui rellenamos los campos del formulario
+        $this->id_tarea = $tarea->id_tarea;
+        $this->tarea = $tarea->nombre_tarea;
+        $this->descripcion = $tarea->descripcion_tarea;
+        $this->fecha_inicio = $tarea->fecha_inicio_tarea;
+        $this->fecha_fin = $tarea->fecha_fin_tarea;
+
+        // Cambiamos el modo a actualizar
+        $this->modo = 'editar';
+    }
+
     // Método para guardar la tarea
     public function guardar_tarea(): void
     {
@@ -45,7 +68,11 @@ class Index extends Component
         ]);
 
         // Aquí iría la lógica para guardar la tarea
-        $tarea = new Tarea();
+        if ($this->modo === 'crear') {
+            $tarea = new Tarea(); // Crear una nueva instancia de la tarea
+        } else {
+            $tarea = Tarea::find($this->id_tarea); // Buscar la tarea por el ID
+        }
         $tarea->nombre_tarea = $this->tarea;
         $tarea->descripcion_tarea = $this->descripcion;
         $tarea->estado_tarea = 1;
@@ -55,7 +82,14 @@ class Index extends Component
         $tarea->save();
 
         // Limpiar los campos
-        $this->reset(['tarea', 'descripcion', 'fecha_inicio', 'fecha_fin']);
+        $this->reset([
+            'id_tarea',
+            'tarea',
+            'descripcion',
+            'fecha_inicio',
+            'fecha_fin',
+            'modo',
+        ]);
 
         // Mostrar la alerta
         $this->alerta('Tarea guardada correctamente', true);
