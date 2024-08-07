@@ -31,4 +31,11 @@ class Usuario extends Authenticatable
     {
         return $this->hasMany(Tarea::class, 'id_usuario', 'id_usuario');
     }
+
+    public function dosPrimerasLetrasNombres(): string
+    {
+        $iniciales = substr($this->nombre_usuario, 0, 2);
+        $iniciales = strtoupper($iniciales);
+        return $iniciales;
+    }
 }
